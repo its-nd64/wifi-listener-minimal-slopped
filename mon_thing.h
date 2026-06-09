@@ -2,15 +2,18 @@
 #include "Arduino.h"
 #include "config.h"
 
-unsigned long prevIdle0Runtime, prevIdle1Runtime, prevRuntime;
+static uint32_t prevRuntime, prevIdle0Runtime, prevIdle1Runtime;
+uint32_t totalRunTime;
 float cpuUsage0, cpuUsage1;
+TaskStatus_t* taskStatusArray;
+SemaphoreHandle_t monMutex = xSemaphoreCreateMutex();
 
 void init_mon() {
     xTaskCreatePinnedToCore([](void* _) {
-        uint32_t totalRunTime;
         unsigned int orgTaskCount = uxTaskGetNumberOfTasks();
-        TaskStatus_t* taskStatusArray = (TaskStatus_t*)malloc(orgTaskCount * sizeof(TaskStatus_t));
+        taskStatusArray = (TaskStatus_t*)malloc(orgTaskCount * sizeof(TaskStatus_t));
         while (1) {
+            xSemaphoreTake(monMutex, portMAX_DELAY);
             const UBaseType_t taskCount = uxTaskGetNumberOfTasks();
             if (taskCount != orgTaskCount) {
                 orgTaskCount = taskCount;
@@ -33,6 +36,7 @@ void init_mon() {
             }
 
             prevRuntime = totalRunTime;
+            xSemaphoreGive(monMutex);
             delay(1000);
         }
     }, "mon dude", MONITOR_TASK_STACK_SIZE, NULL, 3, NULL, MONITOR_TASK_CORE);

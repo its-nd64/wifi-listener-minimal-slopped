@@ -27,12 +27,9 @@ void init_button() {
 	button2.setClickMs(50);
 	button2.setPressMs(600);
  
-	button1.attachClick([]() {
-		menuIndex = menuIndex ? 0 : 1;
+	button1.attachClick([]() { // 0->1->3->0, dont go to 3 if enable debug menu is false
+		menuIndex = (menuIndex == 0) ? 1 : (menuIndex == 1) ? (enableDebugMenu ? 3 : 0) : 0;
 		display_draw();
-	});
-	button1.attachDoubleClick([]() {
-		deauthActive = !deauthActive;
 	});
 	button1.attachLongPressStart([]() {
 		deauthActive = !deauthActive;
@@ -43,8 +40,9 @@ void init_button() {
 				channelIndex = (channelIndex + 1) % channels.size();
 				esp_wifi_set_channel(channels[channelIndex], WIFI_SECOND_CHAN_NONE);
 			}
-		}
-		else menuIndex = (menuIndex == 1) ? 2 : 1;
+		} else if (menuIndex == 1) menuIndex = 2;
+		else if (menuIndex == 2) menuIndex = 1;
+		else debugMenuSortByIndex = (debugMenuSortByIndex + 1) % 5;
 		display_draw();
 	});
 	button2.attachLongPressStart([]() {

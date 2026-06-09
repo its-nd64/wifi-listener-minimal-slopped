@@ -18,7 +18,7 @@ void setup() {
 	pinMode(ENABLE_DEBUG_MENU_PIN, INPUT_PULLDOWN);
 	disableSD = digitalRead(DISABLE_SD_PIN);
 	alwaysSendWPA2Beacon = digitalRead(ALWAYS_SEND_WPA2_BEACON_PIN);
-	debugMenuEnabled = digitalRead(ENABLE_DEBUG_MENU_PIN);
+	enableDebugMenu = digitalRead(ENABLE_DEBUG_MENU_PIN);
 
 	// init_display() MUST be first - init logging uses raw sprite.print
     init_display();
@@ -65,7 +65,7 @@ void setup() {
 
 	xTaskCreatePinnedToCore([](void* _) {
 		while (1) {
-			delay(menuIndex ? LOG_MENU_UPDATE_INTERVAL : MAIN_MENU_UPDATE_INTERVAL);
+			delay(menuIndex ? (menuIndex == 3 ? DEBUG_MENU_UPDATE_INTERVAL : LOG_MENU_UPDATE_INTERVAL) : MAIN_MENU_UPDATE_INTERVAL);
 			display_draw();
 			packetCounts::rssi = packetCounts::packetCount ? packetCounts::rssiTmp / (int)packetCounts::packetCount : packetCounts::rssi;
 			packetCounts::packetCount = packetCounts::deauthCount = packetCounts::probeCount = packetCounts::dataCount = packetCounts::beaconCount = packetCounts::rssiTmp = 0;

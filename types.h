@@ -54,4 +54,13 @@ bool deauthActive;
 
 bool disableSD;
 bool alwaysSendWPA2Beacon;
-bool debugMenuEnabled;
+bool enableDebugMenu;
+
+/*
+	0: sort by cpu usage
+	1: sort by avg cpu usage
+	2: sort by heap remaining
+	3: sort by task name
+	4: sort by priority
+*/
+int debugMenuSortByIndex;
