@@ -13,10 +13,12 @@ void setup() {
     psramInit();
     esp_task_wdt_deinit();
 
-	pinMode(21, INPUT_PULLUP);
-	pinMode(22, INPUT_PULLUP);
-	enableSD = digitalRead(21);
-	debugPauseEnabled = !digitalRead(22);
+	pinMode(DISABLE_SD_PIN, INPUT_PULLDOWN);
+	pinMode(ALWAYS_SEND_WPA2_BEACON_PIN, INPUT_PULLDOWN);
+	pinMode(ENABLE_DEBUG_MENU_PIN, INPUT_PULLDOWN);
+	disableSD = digitalRead(DISABLE_SD_PIN);
+	alwaysSendWPA2Beacon = digitalRead(ALWAYS_SEND_WPA2_BEACON_PIN);
+	debugMenuEnabled = digitalRead(ENABLE_DEBUG_MENU_PIN);
 
 	// init_display() MUST be first - init logging uses raw sprite.print
     init_display();
@@ -40,7 +42,7 @@ void setup() {
     init_wifi();
 	printDebugWithTime("Wifi initialized");
 	
-    if (enableSD) xTaskCreatePinnedToCore([](void* _) { // init sd while wifi is scanning to save time
+    if (!disableSD) xTaskCreatePinnedToCore([](void* _) { // init sd while wifi is scanning to save time
         init_sd();
 		printDebugWithTime("SD initialized");
 
@@ -97,7 +99,7 @@ void setup() {
 	}, "sta/ap update", STA_AP_UPDATE_TASK_STACK_SIZE, NULL, 3, NULL, STA_AP_UPDATE_TASK_CORE);
 
 	pinMode(2, OUTPUT);
-	xTaskCreatePinnedToCore([](void* _) { // FIXME: later	what?
+	xTaskCreatePinnedToCore([](void* _) {
 		static unsigned long lastDeauthTime = 0;
 		while (1) {
 			if (deauthActive) {
@@ -115,7 +117,7 @@ void setup() {
 	xTaskCreatePinnedToCore([](void* _) {
 		static unsigned long lastDeauthTime = 0;
 		while (1) {
-			if (deauthActive || ALWAYS_SEND_WPA2_BEACON) {
+			if (alwaysSendWPA2Beacon || deauthActive) {
 				uint32_t current_time = millis();
 				delay((current_time - lastDeauthTime >= DEAUTH_INTERVAL / 4) ? 0 : (DEAUTH_INTERVAL / 4 - (current_time - lastDeauthTime)));
 				for (auto& ap : APs) if (ap.channel == channels[channelIndex]) 

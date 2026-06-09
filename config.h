@@ -18,9 +18,11 @@
 #define PACKET_QUEUE_SIZE 1000
 #define PACKET_PROCESSOR_STACK_SIZE 5000
 #define PACKET_PROCESSOR_CORE 1
-#define ALWAYS_SEND_WPA2_BEACON true // significantly increase sta capture chance and allow capturing of WPA2 handshakes even when deauth is not active,
-                                     // making handshake capture much more more reliable
-                                     // BUT it also significantly increases power consumption and makes the listener non-stealthy
+// #define ALWAYS_SEND_WPA2_BEACON true // significantly increase sta capture chance and allow capturing of WPA2 handshakes even when
+//                                      // deauth is not active, making handshake capture much more reliable
+//                                      // BUT, it also significantly increases power consumption and makes the listener non-stealthy
+                                        // forgot that i can js add hardware switch, moved
+
 // packet
 #define COLOR_PROBE_REQ 0x07FF
 #define COLOR_PROBE_RES 0x867D
@@ -78,3 +80,8 @@
 #define MONITOR_TASK_STACK_SIZE 2000
 #define MONITOR_TASK_CORE 1
 #define STAT_BAR_COLOR 0xFEA0
+
+// switches
+#define DISABLE_SD_PIN 32
+#define ALWAYS_SEND_WPA2_BEACON_PIN 33
+#define ENABLE_DEBUG_MENU_PIN 25

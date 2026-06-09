@@ -61,7 +61,6 @@ void scan() {
 	sprite.setTextColor(TFT_GREENYELLOW);
 	sprite.println("Done!");
 	sprite.pushSprite(0, 0);
-	if (debugPauseEnabled) waitForAnyButtonPress();
 
 	uint16_t ap_num = 0;
 	esp_wifi_scan_get_ap_num(&ap_num);

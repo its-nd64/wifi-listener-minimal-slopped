@@ -58,9 +58,9 @@ void bufWrite(const uint8_t* data, uint16_t len) {
 void writePcapPacket(uint32_t tS, uint32_t tmS, uint16_t len, const uint8_t* payload) {
 	uint8_t hdr[16];
 	uint32_t caplen = len, origlen = len;
-	memcpy(hdr,      &tS,     4);
-	memcpy(hdr + 4,  &tmS,    4);
-	memcpy(hdr + 8,  &caplen, 4);
+	memcpy(hdr,  &tS, 4);
+	memcpy(hdr + 4, &tmS, 4);
+	memcpy(hdr + 8, &caplen, 4);
 	memcpy(hdr + 12, &origlen,4);
 	bufWrite(hdr, 16);
 	bufWrite(payload, len);

@@ -50,7 +50,8 @@ struct AP_Info {
 vector<AP_Info> APs;
 vector<uint8_t> channels;
 size_t channelIndex = 0;
-
-bool enableSD;
-bool debugPauseEnabled;
 bool deauthActive;
+
+bool disableSD;
+bool alwaysSendWPA2Beacon;
+bool debugMenuEnabled;
